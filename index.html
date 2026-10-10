@@ -1,500 +1,229 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskMaster Pro - Advanced To-Do Application</title>
+
+    <title>TaskFlow Studio • Smart & Aesthetic Planner</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        studio: {
+                            50: '#f4f6ff',
+                            100: '#eceffc',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        };
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <main class="app-container">
-        <header class="app-header">
-            <h1>TaskMaster Pro</h1>
-            <p class="subtitle">Efficient state management & local persistence</p>
-        </header>
 
-        <!-- Task Creation Form -->
-        <form id="task-form" class="task-form">
-            <input 
-                type="text" 
-                id="task-input" 
-                placeholder="What needs to be done?" 
-                autocomplete="off"
-                required
-            />
-            <button type="submit" class="btn-primary">Add Task</button>
-        </form>
+<body class="min-h-screen flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
 
-        <!-- Filter Controls -->
-        <nav class="filter-nav" aria-label="Task Filters">
-            <button type="button" class="filter-btn active" data-filter="all">All</button>
-            <button type="button" class="filter-btn" data-filter="active">Active</button>
-            <button type="button" class="filter-btn" data-filter="completed">Completed</button>
-        </nav>
+    <!-- Header -->
+    <header class="w-full border-b border-slate-200 dark:border-slate-800 glass-card sticky top-0 z-40 transition-colors">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-violet-500 to-pink-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/25">
+                    <i class="fa-solid fa-sparkles text-base"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight bg-gradient-to-r from-indigo-600 to-violet-500 bg-clip-text text-transparent">
+                        TaskFlow Studio
+                    </h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">
+                        Your calm & aesthetic daily workspace
+                    </p>
+                </div>
+            </div>
 
-        <!-- Task List Container -->
-        <section class="task-section">
-            <ul id="task-list" class="task-list">
-                <!-- Dynamically populated via JavaScript -->
-            </ul>
+            <button id="theme-toggle"
+                    class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+                    aria-label="Toggle Theme">
+                <i id="theme-icon" class="fa-solid fa-moon text-sm"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-4xl w-full mx-auto px-4 py-8 flex-grow">
+
+        <!-- Statistics -->
+        <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <div class="glass-card rounded-2xl p-5 shadow-sm flex items-center justify-between border-l-4 border-l-indigo-500">
+                <div>
+                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">All Tasks</p>
+                    <h3 id="stat-total" class="text-2xl font-bold mt-1 text-slate-800 dark:text-white">0</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-500 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 shadow-sm flex items-center justify-between border-l-4 border-l-amber-500">
+                <div>
+                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">In Progress</p>
+                    <h3 id="stat-active" class="text-2xl font-bold mt-1 text-amber-500">0</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-500 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 shadow-sm flex items-center justify-between border-l-4 border-l-emerald-500">
+                <div>
+                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Completed</p>
+                    <h3 id="stat-completed" class="text-2xl font-bold mt-1 text-emerald-500">0</h3>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-500 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+            </div>
         </section>
 
-        <!-- Footer / Controls Bar -->
-        <footer class="app-footer">
-            <span id="task-count" class="task-count">0 items left</span>
-            <button type="button" id="clear-completed" class="btn-text">Clear Completed</button>
-        </footer>
+        <!-- Task Form -->
+        <section class="glass-card rounded-2xl p-6 shadow-sm mb-8 transition-all relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none"></div>
+
+            <h2 id="form-title" class="text-base font-semibold mb-4 flex items-center gap-2 text-slate-800 dark:text-slate-100">
+                <i class="fa-solid fa-circle-plus text-indigo-500"></i> Add New Task
+            </h2>
+
+            <form id="task-form" class="space-y-4">
+                <input type="hidden" id="task-id">
+
+                <div>
+                    <label for="task-title" class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
+                        What needs to be done? *
+                    </label>
+                    <input type="text" id="task-title" required
+                           placeholder="e.g. Plan weekend trip, finish project report..."
+                           class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/60 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label for="task-category" class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Category</label>
+                        <select id="task-category" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/60 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                            <option value="Personal">🏡 Personal</option>
+                            <option value="Work" selected>💼 Work</option>
+                            <option value="Ideas">💡 Ideas</option>
+                            <option value="Shopping">🛒 Shopping</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="task-priority" class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Priority Level</label>
+                        <select id="task-priority" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/60 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                            <option value="Low">🟢 Low Priority</option>
+                            <option value="Medium" selected>🟡 Medium Priority</option>
+                            <option value="High">🔴 High Priority</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="task-due" class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Due Date</label>
+                        <input type="date" id="task-due"
+                               class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/60 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all text-sm">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end space-x-3 pt-2">
+                    <button type="button" id="cancel-btn"
+                            class="hidden px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-sm font-medium transition-all">
+                        Cancel
+                    </button>
+
+                    <button type="submit" id="submit-btn"
+                            class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-500 text-white font-medium text-sm shadow-lg shadow-indigo-500/25 hover:opacity-95 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> Add Task
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Filters and Search -->
+        <section class="glass-card rounded-2xl p-4 shadow-sm mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-1 bg-slate-100 dark:bg-slate-900/80 p-1 rounded-xl w-full sm:w-auto">
+                <button data-filter="all" class="filter-btn flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs font-medium transition-all bg-white dark:bg-slate-800 text-slate-800 dark:text-white shadow-sm">All Tasks</button>
+                <button data-filter="active" class="filter-btn flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-all">In Progress</button>
+                <button data-filter="completed" class="filter-btn flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white transition-all">Completed</button>
+            </div>
+
+            <div class="flex items-center space-x-3 w-full sm:w-auto">
+                <div class="relative flex-grow sm:w-64">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-search text-xs"></i>
+                    </span>
+                    <input type="text" id="search-input" placeholder="Search tasks..."
+                           class="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white/60 dark:bg-slate-900/60 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs transition-all">
+                </div>
+
+                <button id="clear-completed"
+                        class="px-3 py-2 rounded-xl text-xs font-medium text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all border border-transparent hover:border-rose-200 dark:hover:border-rose-900 whitespace-nowrap"
+                        title="Clear Completed Tasks">
+                    <i class="fa-solid fa-trash-can mr-1"></i> Clear Done
+                </button>
+            </div>
+        </section>
+
+        <!-- Task List -->
+        <section>
+            <div id="task-list" class="space-y-3"></div>
+
+            <div id="empty-state" class="hidden text-center py-16 px-4 glass-card rounded-2xl shadow-sm">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-indigo-50 dark:bg-indigo-950/50 flex items-center justify-center text-indigo-500 text-2xl">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                </div>
+                <h3 class="text-base font-semibold text-slate-700 dark:text-slate-200">All caught up!</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Add a new task above to start planning your day.</p>
+            </div>
+        </section>
     </main>
-    <!--adding cascading stylesheet css on a html   -->
-    <style>
-        /* --- CSS Design System --- */
-:root {
-    --primary: #4f46e5;
-    --primary-hover: #4338ca;
-    --bg-color: #f8fafc;
-    --card-bg: #ffffff;
-    --text-main: #1e293b;
-    --text-muted: #64748b;
-    --border-color: #e2e8f0;
-    --danger: #ef4444;
-    --danger-hover: #dc2626;
-    --radius: 12px;
-    --transition: all 0.2s ease-in-out;
-}
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-}
+    <!-- Footer -->
+    <footer class="w-full border-t border-slate-200 dark:border-slate-800 bg-white/40 dark:bg-slate-900/40 py-4 mt-auto">
+        <div class="max-w-4xl mx-auto px-4 text-center text-xs text-slate-500 dark:text-slate-400">
+            TaskFlow Studio • Saved locally to your browser automatically
+        </div>
+    </footer>
 
-body {
-    background-color: var(--bg-color);
-    color: var(--text-main);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
-}
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="px-4 py-3 rounded-xl shadow-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 text-xs font-medium flex items-center space-x-2">
+            <i id="toast-icon" class="fa-solid fa-check-circle text-indigo-400"></i>
+            <span id="toast-message">Action successful</span>
+        </div>
+    </div>
 
-.app-container {
-    width: 100%;
-    max-width: 520px;
-    background: var(--card-bg);
-    padding: 32px;
-    border-radius: var(--radius);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-}
-
-.app-header {
-    text-align: center;
-    margin-bottom: 24px;
-}
-
-.app-header h1 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--text-main);
-    letter-spacing: -0.025em;
-}
-
-.subtitle {
-    font-size: 0.875rem;
-    color: var(--text-muted);
-    margin-top: 4px;
-}
-
-/* Form Styles */
-.task-form {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.task-form input {
-    flex: 1;
-    padding: 12px 16px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 0.95rem;
-    outline: none;
-    transition: var(--transition);
-    background: #fff;
-}
-
-.task-form input:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-}
-
-.btn-primary {
-    background-color: var(--primary);
-    color: white;
-    border: none;
-    padding: 0 20px;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-    white-space: nowrap;
-}
-
-.btn-primary:hover {
-    background-color: var(--primary-hover);
-}
-
-/* Filter Navigation */
-.filter-nav {
-    display: flex;
-    background: var(--bg-color);
-    padding: 4px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-.filter-btn {
-    flex: 1;
-    background: transparent;
-    border: none;
-    padding: 8px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--text-muted);
-    border-radius: 6px;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.filter-btn:hover {
-    color: var(--text-main);
-}
-
-.filter-btn.active {
-    background: white;
-    color: var(--primary);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-/* Task List Styles */
-.task-section {
-    max-height: 360px;
-    overflow-y: auto;
-    margin-bottom: 20px;
-    padding-right: 2px;
-}
-
-.task-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.task-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 16px;
-    background: white;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    transition: all 0.2s ease;
-}
-
-.task-item:hover {
-    border-color: #cbd5e1;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-}
-
-.task-content {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex: 1;
-    min-width: 0;
-}
-
-.task-checkbox {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    accent-color: var(--primary);
-}
-
-.task-text {
-    font-size: 0.95rem;
-    color: var(--text-main);
-    word-break: break-word;
-    transition: var(--transition);
-}
-
-/* Completed State */
-.task-item.completed .task-text {
-    color: var(--text-muted);
-    text-decoration: line-through;
-}
-
-.task-item.completed {
-    background-color: #f8fafc;
-    border-color: #f1f5f9;
-}
-
-/* Actions */
-.task-actions {
-    display: flex;
-    gap: 6px;
-    opacity: 0.6;
-    transition: var(--transition);
-}
-
-.task-item:hover .task-actions {
-    opacity: 1;
-}
-
-.edit-btn, .delete-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-    padding: 4px;
-    border-radius: 4px;
-    transition: var(--transition);
-}
-
-.edit-btn:hover {
-    background: #e0e7ff;
-}
-
-.delete-btn:hover {
-    background: #fee2e2;
-}
-
-/* Empty State */
-.empty-state {
-    text-align: center;
-    padding: 32px;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-}
-
-/* App Footer */
-.app-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 16px;
-    border-top: 1px solid var(--border-color);
-    font-size: 0.875rem;
-}
-
-.task-count {
-    color: var(--text-muted);
-}
-
-.btn-text {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 0.875rem;
-    transition: var(--transition);
-}
-
-.btn-text:hover {
-    color: var(--danger);
-}
-    </style>
-     <!-- add javascript -->
-    <script>
-        /**
- * TaskMaster Pro - Advanced To-Do Application
- * Designed with a modular, state-driven architecture, event delegation, 
- * and persistent local storage synchronization.
- */
-
-class TaskManager {
-    constructor() {
-        // Initialize state from local storage or fallback to defaults
-        this.tasks = JSON.parse(localStorage.getItem('taskmaster_tasks')) || [
-            { id: '1', text: 'Review quarterly architecture roadmap', completed: true, createdAt: new Date(Date.now() - 86400000).toISOString() },
-            { id: '2', text: 'Optimize database indexes for query performance', completed: false, createdAt: new Date().toISOString() }
-        ];
-        
-        this.currentFilter = 'all';
-        this.editingId = null;
-
-        this.initDOMReferences();
-        this.bindEvents();
-        this.render();
-    }
-
-    initDOMReferences() {
-        this.form = document.getElementById('task-form');
-        this.input = document.getElementById('task-input');
-        this.taskList = document.getElementById('task-list');
-        this.filterBtns = document.querySelectorAll('.filter-btn');
-        this.taskCount = document.getElementById('task-count');
-        this.clearCompletedBtn = document.getElementById('clear-completed');
-    }
-
-    bindEvents() {
-        // Handle form submission (Create / Update)
-        this.form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleFormSubmit();
-        });
-
-        // Event delegation for list actions (Toggle, Edit, Delete)
-        this.taskList.addEventListener('click', (e) => {
-            const target = e.target;
-            const li = target.closest('.task-item');
-            if (!li) return;
-
-            const id = li.dataset.id;
-
-            if (target.classList.contains('task-checkbox') || target.closest('.task-checkbox')) {
-                this.toggleTask(id);
-            } else if (target.classList.contains('delete-btn') || target.closest('.delete-btn')) {
-                this.deleteTask(id);
-            } else if (target.classList.contains('edit-btn') || target.closest('.edit-btn')) {
-                this.startEdit(id);
-            }
-        });
-
-        // Filter tab switching
-        this.filterBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                this.filterBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                this.currentFilter = btn.dataset.filter;
-                this.render();
-            });
-        });
-
-        // Clear completed batch action
-        this.clearCompletedBtn.addEventListener('click', () => {
-            this.tasks = this.tasks.filter(task => !task.completed);
-            this.saveAndRender();
-        });
-    }
-
-    handleFormSubmit() {
-        const text = this.input.value.trim();
-        if (!text) return;
-
-        if (this.editingId) {
-            // Update existing task
-            this.tasks = this.tasks.map(task => 
-                task.id === this.editingId ? { ...task, text } : task
-            );
-            this.editingId = null;
-            this.form.querySelector('button[type="submit"]').textContent = 'Add Task';
-        } else {
-            // Create new task object
-            const newTask = {
-                id: '_' + Math.random().toString(36).substr(2, 9),
-                text,
-                completed: false,
-                createdAt: new Date().toISOString()
-            };
-            this.tasks.unshift(newTask);
-        }
-
-        this.input.value = '';
-        this.saveAndRender();
-    }
-
-    toggleTask(id) {
-        this.tasks = this.tasks.map(task =>
-            task.id === id ? { ...task, completed: !task.completed } : task
-        );
-        this.saveAndRender();
-    }
-
-    deleteTask(id) {
-        // Add subtle fade-out transition hook if desired
-        const element = document.querySelector(`[data-id="${id}"]`);
-        if (element) {
-            element.style.transform = 'translateX(20px)';
-            element.style.opacity = '0';
-            setTimeout(() => {
-                this.tasks = this.tasks.filter(task => task.id !== id);
-                this.saveAndRender();
-            }, 200);
-        } else {
-            this.tasks = this.tasks.filter(task => task.id !== id);
-            this.saveAndRender();
-        }
-    }
-
-    startEdit(id) {
-        const task = this.tasks.find(t => t.id === id);
-        if (!task) return;
-
-        this.input.value = task.text;
-        this.input.focus();
-        this.editingId = id;
-        this.form.querySelector('button[type="submit"]').textContent = 'Update Task';
-    }
-
-    getFilteredTasks() {
-        switch (this.currentFilter) {
-            case 'active':
-                return this.tasks.filter(t => !t.completed);
-            case 'completed':
-                return this.tasks.filter(t => t.completed);
-            default:
-                return this.tasks;
-        }
-    }
-
-    saveState() {
-        localStorage.setItem('taskmaster_tasks', JSON.stringify(this.tasks));
-    }
-
-    saveAndRender() {
-        this.saveState();
-        this.render();
-    }
-
-    render() {
-        const filteredTasks = this.getFilteredTasks();
-        
-        // Render dynamic DOM items
-        this.taskList.innerHTML = filteredTasks.length === 0 
-            ? `<li class="empty-state">No tasks found in this view.</li>`
-            : filteredTasks.map(task => `
-                <li class="task-item ${task.completed ? 'completed' : ''}" data-id="${task.id}">
-                    <div class="task-content">
-                        <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
-                        <span class="task-text">${this.escapeHTML(task.text)}</span>
-                    </div>
-                    <div class="task-actions">
-                        <button class="edit-btn" title="Edit Task">✏️</button>
-                        <button class="delete-btn" title="Delete Task">🗑️</button>
-                    </div>
-                </li>
-            `).join('');
-
-        // Update active items counter
-        const activeCount = this.tasks.filter(t => !t.completed).length;
-        this.taskCount.textContent = `${activeCount} item${activeCount === 1 ? '' : 's'} left`;
-    }
-
-    escapeHTML(str) {
-        return str.replace(/[&<>'"]/g, 
-            tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-        );
-    }
-}
-
-// Bootstrap application instance on DOM load
-document.addEventListener('DOMContentLoaded', () => {
-    window.taskManager = new TaskManager();
-});
-    </script>
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
 </body>
 </html>
