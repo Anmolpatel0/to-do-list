@@ -2,50 +2,6 @@
 // ==========================================
 // TaskFlow Studio - Application Logic
 // ==========================================
-
-// payment 
-      
-const UPI_ID = "7803824128@ybl";
-const PAYEE_NAME = "Anmol Patel";
-
-function getPaymentUri() {
-  const upiId = UPI_ID.trim();
-
-  if (!upiId || upiId === "YOUR-UPI-ID@upi") {
-    message.textContent =
-      "Please set your real UPI ID in the code first.";
-    return null;
-  }
-
-  const selectedPlan = document.querySelector(
-    'input[name="paymentPlan"]:checked'
-  );
-
-  if (!selectedPlan) {
-    message.textContent = "Please select a payment plan.";
-    return null;
-  }
-
-  const amount = Number(selectedPlan.value);
-
-  if (![400, 1000].includes(amount)) {
-    message.textContent = "Invalid payment plan.";
-    return null;
-  }
-
-  const params = new URLSearchParams({
-    pa: upiId,
-    pn: PAYEE_NAME,
-    cu: "INR",
-    am: amount.toFixed(2)
-  });
-
-  return "upi://pay?" + params.toString();
-         }
-
-
-
-
 // State Management
 let tasks;
 
