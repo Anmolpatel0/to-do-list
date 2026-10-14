@@ -1,4 +1,47 @@
 
+/* adding payment css */ 
+
+.payment-plans {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.payment-plan {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.payment-plan:has(input:checked) {
+  border: 2px solid #4f46e5;
+  background: #eef2ff;
+}
+
+.payment-plan span {
+  display: grid;
+  gap: 5px;
+}
+
+.payment-plan strong {
+  font-size: 1.2rem;
+}
+
+.payment-plan small {
+  font-size: .8rem;
+}
+
+@media (max-width: 420px) {
+  .payment-plans {
+    grid-template-columns: 1fr;
+  }
+}
 
 /* Base Styles */
 body {
