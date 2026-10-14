@@ -1,4 +1,25 @@
 
+.developer-payment {
+  text-align: center;
+  padding: 24px;
+  border-radius: 16px;
+  margin: 24px auto;
+}
+
+.developer-qr {
+  display: block;
+  width: 240px;
+  max-width: 100%;
+  height: auto;
+  margin: 16px auto;
+  border-radius: 8px;
+}
+
+.developer-payment p {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
 /* adding payment css */ 
 
 .payment-plans {
